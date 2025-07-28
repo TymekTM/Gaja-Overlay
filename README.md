@@ -1,411 +1,247 @@
-# 🎨 GAJA Overlay
+# Gaja Overlay
 
-**Optional Visual Overlay for GAJA Assistant - Rust/Tauri Implementation**
+**Gaja Overlay** is an optional visual component within the [GAJA Assistant](https://github.com/TymekTM/Gaja) ecosystem, a self-hosted, modular AI home assistant emphasizing privacy, control, and extensibility.
 
-GAJA Overlay is an optional visual component that provides a floating window with real-time status updates, voice visualization, and quick controls for the GAJA Assistant system.
+Gaja Overlay provides a transparent, fullscreen visual feedback interface with real-time status updates, animated ball indicator, and response display for voice interactions.
 
-## ⚠️ Optional Component
+> **⚠️ Currently Under Reconstruction**: This component is actively being redesigned and may not work properly in its current state. The overlay is completely optional - GAJA Client works perfectly without it.
 
-**The overlay is completely optional!** GAJA Client works perfectly without it. The overlay only adds visual feedback and convenience features.
+## Table of Contents
 
-## 🚀 Quick Start
+- [What is Gaja Overlay?](#what-is-gaja-overlay)
+- [Current Status](#current-status)
+- [Architecture](#architecture)
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Development](#development)
+- [Troubleshooting](#troubleshooting)
 
-### Pre-built Binary (Recommended)
+## What is Gaja Overlay?
 
-```bash
-# The overlay executable is included with GAJA Client
-# Enable it in client configuration:
+Gaja Overlay is a **fullscreen transparent overlay** designed to provide visual feedback during voice interactions with the GAJA Assistant. Built with Rust/Tauri and React, it displays:
+
+- **Animated Status Ball**: Visual indicator for listening, speaking, and wake word detection
+- **Real-time Status Updates**: Connection with GAJA Client via HTTP/SSE
+- **Response Display**: Text responses with dynamic font sizing
+- **Transparent Design**: Non-intrusive fullscreen overlay
+
+## Current Status
+
+### ⚠️ Reconstruction Phase
+
+The overlay is currently being rebuilt and may experience:
+- Connection issues with GAJA Client
+- UI rendering problems
+- Incomplete functionality
+- Configuration conflicts
+
+### Working Features
+- ✓ Fullscreen transparent overlay
+- ✓ Animated Gaja ball indicator
+- ✓ Status text display
+- ✓ Dynamic response rendering
+- ✓ Basic Tauri/React architecture
+
+### Known Issues
+- ❌ Inconsistent connection to GAJA Client
+- ❌ Configuration management needs update  
+- ❌ Auto-hide logic may not work properly
+- ❌ Build process may require manual intervention
+
+## Architecture
+
+### Technology Stack
+
+- **Backend**: Rust with Tauri framework
+- **Frontend**: React 18 with Vite
+- **Communication**: HTTP polling and SSE (Server-Sent Events)
+- **Rendering**: Transparent fullscreen overlay with CSS animations
+
+### Components
+
+- **Main Rust Application** (`src/main.rs`): Tauri backend handling window management and client communication
+- **React Frontend** (`src/App.jsx`): UI components for status display and animations
+- **Status Polling**: Connects to GAJA Client on ports 5000/5001 for real-time updates
+- **Window Management**: Fullscreen transparent overlay with click-through support
+
+### Communication Flow
+
+1. **Client Connection**: Overlay connects to GAJA Client HTTP API (`localhost:5000/5001`)
+2. **Status Updates**: Real-time status via polling or SSE stream (`/status/stream`)
+3. **Visual Feedback**: React components render based on received status data
+4. **Auto-hide Logic**: Window visibility managed by Rust backend
+
+## Requirements
+
+### System Requirements
+
+- **Windows 10/11** (primary target)
+- **Rust 1.70+** (for building from source)
+- **Node.js 18+** (for building from source)
+- **GAJA Client running** (for functionality)
+
+### Dependencies
+
+```toml
+# Cargo.toml
+[dependencies]
+tauri = "1.8.3"
+tokio = "1.0"
+reqwest = "0.11"
+serde = "1.0"
+serde_json = "1.0"
+```
+
+```json
+// package.json
 {
-  "ui": {
-    "overlay_enabled": true
+  "dependencies": {
+    "@tauri-apps/api": "^1.5.6",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   }
 }
-
-# Or enable via setup wizard when first running GAJA Client
-python start.py
 ```
+
+## Installation
 
 ### Build from Source
 
 ```bash
-# Prerequisites: Rust and Node.js
-# Install Rust from https://rustup.rs/
-# Install Node.js from https://nodejs.org/
+# Clone repository
+git clone https://github.com/TymekTM/Gaja-Overlay.git
+cd Gaja-Overlay
 
-# Clone overlay repository
-git clone <repo-url> gaja-overlay
-cd gaja-overlay
-
-# Install dependencies
+# Install Node.js dependencies
 npm install
 
 # Build for development
 npm run tauri dev
 
-# Build for production
+# Build for production  
 npm run tauri build
 ```
 
-## 📋 Requirements
+### Prerequisites
 
-- **Windows 10/11** (primary target)
-- **Rust 1.70+** (for building from source)
-- **Node.js 18+** (for building from source)
-- **GAJA Client running** (for integration)
+1. **Install Rust**: https://rustup.rs/
+2. **Install Node.js**: https://nodejs.org/
+3. **GAJA Client**: Must be running for overlay functionality
 
-## ✨ Features
+## Configuration
 
-### Visual Feedback
-- **Status Indicator**: Current state (idle, listening, processing, speaking)
-- **Voice Visualization**: Real-time audio levels and waveforms
-- **Response Display**: Text responses from GAJA
-- **Connection Status**: Server connection indicator
-
-### Interactive Controls
-- **Mute/Unmute**: Quick microphone toggle
-- **Settings**: Open client settings
-- **Hide/Show**: Minimize to system tray
-- **Always on Top**: Stay above other windows
-
-### Customization
-- **Position**: Drag to any screen location
-- **Size**: Resize to preference
-- **Transparency**: Adjustable opacity
-- **Theme**: Light/dark mode support
-
-## 🔧 Configuration
-
-The overlay is configured through GAJA Client settings:
-
-```json
-{
-  "ui": {
-    "overlay_enabled": true,
-    "overlay_position": "top-right",
-    "overlay_size": {
-      "width": 400,
-      "height": 300
-    },
-    "overlay_transparency": 0.9,
-    "overlay_always_on_top": true,
-    "overlay_theme": "dark"
-  }
-}
-```
-
-### Position Options
-- `"top-left"`, `"top-right"`, `"bottom-left"`, `"bottom-right"`
-- `"center"`, `"custom"` (remembers last position)
-
-### Theme Options
-- `"dark"` (default): Dark theme with accent colors
-- `"light"`: Light theme
-- `"auto"`: Follow system theme
-
-## 🎮 Usage
-
-### Mouse Controls
-- **Click & Drag**: Move overlay window
-- **Right Click**: Show context menu
-- **Double Click**: Toggle compact/full view
-- **Scroll Wheel**: Adjust transparency
-
-### Keyboard Shortcuts
-- **Escape**: Hide overlay
-- **Space**: Toggle mute/unmute
-- **Enter**: Activate push-to-talk
-- **F11**: Toggle always on top
-
-### Context Menu
-- Toggle microphone
-- Open settings
-- Change theme
-- Adjust transparency
-- Hide overlay
-- Exit
-
-## 📁 Project Structure
-
-```
-gaja-overlay/
-├── README.md              # 📖 This file
-├── package.json           # 📦 Node.js dependencies
-├── Cargo.toml            # 🦀 Rust dependencies
-├── tauri.conf.json       # ⚙️ Tauri configuration
-├── 
-├── src/                  # 🎨 Frontend (React/TypeScript)
-│   ├── App.jsx           # Main React component
-│   ├── main.jsx          # React entry point
-│   ├── index.html        # HTML template
-│   └── style.css         # Styling
-├── 
-├── src-tauri/            # 🦀 Backend (Rust)
-│   ├── src/
-│   │   ├── main.rs       # Main Rust application
-│   │   └── lib.rs        # Library functions
-│   ├── Cargo.toml        # Rust dependencies
-│   └── icons/            # Application icons
-├── 
-├── target/               # 🔨 Build output
-│   ├── debug/            # Development builds
-│   └── release/          # Production builds
-└── 
-└── dist/                 # 📦 Distribution files
-```
-
-## 🛠️ Development
-
-### Development Mode
-
-```bash
-# Start in development mode (hot reload)
-npm run tauri dev
-
-# Build without running
-npm run tauri build --debug
-```
-
-### Adding Features
-
-1. **Frontend changes**: Edit files in `src/`
-2. **Backend changes**: Edit files in `src-tauri/src/`
-3. **Configuration**: Update `tauri.conf.json`
-4. **Dependencies**: Update `package.json` or `Cargo.toml`
-
-### Communication with Client
-
-The overlay communicates with GAJA Client via:
-
-```rust
-// Rust backend
-use tauri::{Window, Manager};
-
-#[tauri::command]
-async fn update_status(window: Window, status: String) {
-    window.emit("status-update", status).unwrap();
-}
-```
-
-```javascript
-// Frontend
-import { listen } from '@tauri-apps/api/event';
-
-listen('status-update', (event) => {
-    console.log('Status:', event.payload);
-});
-```
-
-## 🧪 Testing
-
-```bash
-# Run Rust tests
-cargo test
-
-# Run frontend tests
-npm test
-
-# Integration test with client
-# 1. Start GAJA Client
-# 2. Enable overlay in config
-# 3. Verify communication
-```
-
-## 🏗️ Building
-
-### Development Build
-
-```bash
-npm run tauri build --debug
-```
-
-### Production Build
-
-```bash
-npm run tauri build
-```
-
-### Cross-compilation
-
-```bash
-# For Windows (from Linux/Mac)
-npm run tauri build --target x86_64-pc-windows-msvc
-
-# For Linux (from Windows/Mac)
-npm run tauri build --target x86_64-unknown-linux-gnu
-```
-
-## 📦 Distribution
-
-### Single Executable
-
-The overlay builds to a single executable:
-- Windows: `gaja-overlay.exe`
-- Linux: `gaja-overlay`
-- macOS: `GAJA Overlay.app`
-
-### Auto-updater
-
-Built-in update mechanism:
+### Tauri Configuration (`tauri.conf.json`)
 
 ```json
 {
   "tauri": {
-    "updater": {
-      "active": true,
-      "endpoints": [
-        "https://releases.gaja.ai/overlay/{{target}}/{{current_version}}"
-      ]
-    }
+    "windows": [
+      {
+        "fullscreen": false,
+        "height": 1080,
+        "width": 1920,
+        "decorations": false,
+        "transparent": true,
+        "alwaysOnTop": true,
+        "skipTaskbar": true,
+        "focus": false,
+        "visible": true
+      }
+    ]
   }
 }
 ```
 
-## 🚨 Troubleshooting
+### Client Connection Settings
+
+The overlay attempts to connect to GAJA Client on:
+- **Primary**: `http://localhost:5001`
+- **Fallback**: `http://localhost:5000`
+
+### Visual Settings
+
+- **Fullscreen**: 1920x1080 transparent overlay
+- **Position**: Centered content with top alignment
+- **Animation**: Smooth transitions for status changes
+- **Auto-hide**: 30-second timeout for inactivity
+
+## Development
+
+### Development Setup
+
+```bash
+# Clone and setup
+git clone https://github.com/TymekTM/Gaja-Overlay.git
+cd Gaja-Overlay
+
+# Install dependencies
+npm install
+
+# Start development mode
+npm run tauri dev
+```
+
+### Key Files
+
+- **`src/main.rs`**: Tauri backend with window management and client communication
+- **`src/App.jsx`**: React frontend with status display and animations
+- **`src/style.css`**: CSS with fullscreen overlay styling and animations
+- **`tauri.conf.json`**: Window configuration and build settings
+
+### Testing with GAJA Client
+
+1. Start GAJA Client: `python start.py`
+2. Verify client is running on port 5001
+3. Start overlay: `npm run tauri dev`
+4. Check connection in overlay logs
+
+## Troubleshooting
 
 ### Common Issues
 
-1. **Overlay not showing**
-   ```bash
-   # Check if enabled in client config
-   grep overlay_enabled client_config.json
-   
-   # Check overlay process
-   ps aux | grep gaja-overlay  # Linux/Mac
-   tasklist | findstr gaja     # Windows
-   ```
+#### 1. Overlay Not Connecting to Client
+```bash
+# Check if GAJA Client is running
+curl http://localhost:5001/api/status
+curl http://localhost:5000/api/status
 
-2. **Build failures**
-   ```bash
-   # Update Rust
-   rustup update
-   
-   # Clear build cache
-   cargo clean
-   npm run tauri build
-   ```
+# Check overlay logs for connection attempts
+# Look for "[Rust] Testing connection to CLIENT port" messages
+```
 
-3. **Performance issues**
-   - Reduce overlay size
-   - Lower transparency
-   - Disable animations in config
+#### 2. Build Failures
+```bash
+# Update Rust toolchain
+rustup update
 
-4. **Communication errors**
-   - Check WebSocket connection
-   - Verify client is running
-   - Check firewall settings
+# Clean build cache
+cargo clean
+npm run tauri build
+
+# Install missing dependencies
+npm install
+```
+
+#### 3. Transparent Window Issues
+- Ensure Windows 10/11 with desktop composition enabled
+- Check if other overlays are interfering
+- Verify Tauri window configuration
+
+#### 4. CSS Animation Problems
+- Clear browser cache if using dev mode
+- Check console for CSS import errors
+- Verify `style.css` is properly loaded
 
 ### Debug Mode
 
-```bash
-# Enable debug logging
-RUST_LOG=debug npm run tauri dev
-
-# Or set in config
-{
-  "tauri": {
-    "bundle": {
-      "debug": true
-    }
-  }
-}
-```
-
-### Log Files
+Enable debug logging in development:
 
 ```bash
-# Overlay logs
-# Windows: %APPDATA%/gaja-overlay/logs/
-# Linux: ~/.local/share/gaja-overlay/logs/
-# macOS: ~/Library/Application Support/gaja-overlay/logs/
+# Development mode shows detailed logs
+npm run tauri dev
+
+# Check Rust backend logs for connection status
+# Check React frontend logs in dev tools (F12)
 ```
 
-## 🎨 Customization
-
-### Custom Themes
-
-Create custom CSS themes:
-
-```css
-/* Dark theme example */
-.overlay-dark {
-  background: rgba(30, 30, 30, 0.9);
-  color: #ffffff;
-  border: 1px solid #555;
-}
-
-.status-listening {
-  background: linear-gradient(45deg, #00ff00, #008800);
-}
-```
-
-### Custom Components
-
-Add React components:
-
-```jsx
-// StatusIndicator.jsx
-import { useState, useEffect } from 'react';
-
-export function StatusIndicator({ status }) {
-  return (
-    <div className={`status status-${status}`}>
-      {status.toUpperCase()}
-    </div>
-  );
-}
-```
-
-## 📊 Performance
-
-**Tested Configuration:**
-- Rust/Tauri backend
-- React frontend
-- WebGL acceleration
-
-**Benchmarks:**
-- ✅ Memory usage: 20-50MB
-- ✅ CPU usage: <5% (idle), <15% (active)
-- ✅ Startup time: <2 seconds
-- ✅ Response time: <50ms
-
-## 🔒 Security
-
-### Permissions
-
-The overlay uses minimal permissions:
-- Window management
-- File system access (for settings)
-- Network access (for client communication)
-
-### Sandboxing
-
-Tauri provides built-in sandboxing:
-- Limited system access
-- Secure communication channels
-- CSP protection for frontend
-
-## 📝 License
-
-MIT License - see LICENSE file for details.
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit changes (`git commit -m 'Add amazing feature'`)
-4. Push to branch (`git push origin feature/amazing-feature`)
-5. Open Pull Request
-
-## 📞 Support
-
-- **Issues**: Create GitHub issue
-- **Discussions**: GitHub Discussions
-- **Documentation**: See `/docs` folder
-
----
-
-**Status: ✅ Optional Beta Component**
-**Version: 1.0.0-beta**
-**Last Updated: July 22, 2025**
-
-**Note: This component is entirely optional. GAJA works perfectly without the overlay.**
